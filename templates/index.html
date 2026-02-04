@@ -1,5 +1,39 @@
 <!DOCTYPE html>
 <html>
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>CSV File Input</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            height: 100vh;
+            background-color: #f7f7f7;
+            margin: 0;
+        }
+
+        .file-input-container {
+            text-align: center;
+        }
+
+        label {
+            display: inline-block;
+            padding: 10px 20px;
+            background-color: #007bff;
+            color: white;
+            border-radius: 5px;
+            cursor: pointer;
+        }
+
+        label:hover {
+            background-color: #0056b3;
+        }
+    </style>
+</head>
+
 <body>
     <h2>Enter values</h2>
 
@@ -28,5 +62,16 @@
 
         <button type="submit">Submit</button>
     </form>
+    <br><br>
+    <h2>Or submit CSV file with 2 columns</h2>
+    <form action="/submitCSV" method="POST" enctype="multipart/form-data">
+        <div class="file-input-container">
+            <input type="file" name="csvFile" id="csvFile" accept=".csv">
+            <label for="csvFile">Choose CSV File</label>
+        </div>
+
+        <button type="submit">Upload</button>
+    </form>
 </body>
+
 </html>

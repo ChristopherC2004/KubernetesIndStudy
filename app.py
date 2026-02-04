@@ -7,6 +7,7 @@ from flask import Flask, render_template, request
 
 
 app = Flask(__name__)
+app.config['MAX_CONTENT_LENGTH'] = 16 * 1024 * 1024
 
 @app.route("/", methods=["GET"])
 def index():
@@ -33,6 +34,31 @@ def submit():
 
     return render_template("result.html", plot=plot)
 
+@app.route("/submitCSV", methods=["POST"])
+def submitCSV():
+    if 'csvFile' not in request.files:
+        return "No file field in request", 400
+
+    file = request.files.get('csvFile')
+
+    if file.filename == "":
+        return "No file selected", 400
+
+    print("Received file:", file.filename)
+
+    # Read CSV file into DataFrame
+    df = pd.read_csv(file)
+
+    # Assuming the CSV has two columns for x and y values
+    if df.columns.nunique() == 2:
+        fig = px.scatter(df, x=df.columns[0], y=df.columns[1], color=df.columns[0], title="Scatter Plot from CSV")
+    elif df.columns.nunique() ==3:
+        fig = px.scatter(df, x=df.columns[0], y=df.columns[1], color=df.columns[2], title="Scatter Plot from CSV")
+    else:
+        return "CSV must have either 2 or 3 columns for plotting.", 400
+    
+    plot = fig.to_html(full_html=False, include_plotlyjs='cdn')
+    return render_template("result.html", plot=plot)
 
 if __name__ == "__main__":
     app.run(debug=True)
