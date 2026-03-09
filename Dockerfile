@@ -20,5 +20,11 @@ EXPOSE 5000
 # run flask
 CMD ["python", "-m", "flask", "run"]
 
+# Build docker image
 # docker build -t flask-app .
-# docker run -p 5000:5000 flask-app
+
+# Run docker container
+## Linux/Mac
+# docker run -p 5000:5000 -v $(pwd)/data:/app/data flask-app
+## Windows (PowerShell)
+# docker run -p 5000:5000 -v ${PWD}/data:/app/data flask-app

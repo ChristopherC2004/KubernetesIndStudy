@@ -61,6 +61,16 @@
 
         <button type="submit">Upload</button>
     </form>
+    <h2> Select an existing Dataset</h2>
+    <form action="/loadCSV" method="POST">
+        <select name="dataset">
+        {% for file in files %}
+            <option value="{{ file }}">{{ file }}</option>
+        {% endfor %}
+        </select>
+
+        <button type="submit">Load Dataset</button>
+    </form>
 </body>
 
 </html>

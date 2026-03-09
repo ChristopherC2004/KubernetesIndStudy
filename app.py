@@ -1,3 +1,4 @@
+import os
 import webbrowser
 import codecs
 import plotly.express as px
@@ -9,9 +10,13 @@ from flask import Flask, render_template, request
 app = Flask(__name__)
 app.config['MAX_CONTENT_LENGTH'] = 16 * 1024 * 1024
 
+UPLOAD_FOLDER = "/app/data"
+os.makedirs(UPLOAD_FOLDER, exist_ok=True)
+
 @app.route("/", methods=["GET"])
 def index():
-    return render_template("index.html")
+    files = [f for f in os.listdir(UPLOAD_FOLDER) if f.endswith(".csv")]
+    return render_template("index.html", files=files)
 
 @app.route("/submit", methods=["POST"])
 def submit():
@@ -44,12 +49,33 @@ def submitCSV():
     if file.filename == "":
         return "No file selected", 400
 
-    print("Received file:", file.filename)
+    file_name = file.filename
+    print("Received file:", file_name)
 
-    # Read CSV file into DataFrame
-    df = pd.read_csv(file)
+    filepath = os.path.join(UPLOAD_FOLDER, file_name)
+    file.save(filepath)
+    print("File saved to :", filepath)
 
-    # Assuming the CSV has two columns for x and y values
+    return plotFileData(file_path = filepath)
+
+    
+    
+
+@app.route("/loadCSV", methods=["POST"])
+def plotFileData(file_path=None):
+    if file_path is None:
+        file_name = request.form.get("dataset")
+    else:
+            file_name = os.path.basename(file_path)
+    if not file_name:
+        return "No dataset selected", 400
+
+    file_path = os.path.join(UPLOAD_FOLDER, file_name)
+    if not os.path.exists(file_path):
+        return "File not found", 404
+
+    df = pd.read_csv(file_path)
+
     if df.columns.nunique() == 2:
         fig = px.scatter(df, x=df.columns[0], y=df.columns[1], color=df.columns[0], title="Scatter Plot from CSV")
     elif df.columns.nunique() ==3:
