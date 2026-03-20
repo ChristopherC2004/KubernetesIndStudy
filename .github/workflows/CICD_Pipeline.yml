@@ -1,0 +1,15 @@
+name: CICD_Pipeline
+run-name: ${{ github.actor }} is starting the CICD Pipeline
+on: [push]
+jobs:
+  Containerize:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Check out repository code
+        uses: actions/checkout@v5
+        
+      - name: Build Docker Container
+        run: docker build -t flask-app .
+        
+      - name: Test Docker Container
+        run: docker run flask-app python -c "import flask; print('Flask works')"
